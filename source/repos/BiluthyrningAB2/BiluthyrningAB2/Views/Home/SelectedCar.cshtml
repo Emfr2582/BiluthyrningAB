@@ -1,0 +1,20 @@
+﻿@model RentCarVM
+@{
+    ViewData["Title"] = "SelectedCar";
+}
+
+<h1>SelectedCar</h1>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vald bil</title>
+</head>
+<body>
+    <text> Du har gjort följande bokning:</text>
+ @Model.Car.Name
+ <br/>
+ @Model.Days.Day
+
+</body>
+</html>
+

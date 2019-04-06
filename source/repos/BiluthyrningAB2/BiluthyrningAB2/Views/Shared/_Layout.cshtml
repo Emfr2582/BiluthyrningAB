@@ -1,0 +1,37 @@
+﻿@using System.Security.Claims
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.17.0/jquery.validate.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/mvc/5.2.3/jquery.validate.unobtrusive.min.js"></script>
+    <link href="~/StyleSheet.scss" type="text/css" />
+</head>
+<body>
+    <div>
+        @if (User?.Identity.IsAuthenticated == true)
+        {
+            <div>
+                <form asp-controller="home" asp-action="LogOut">
+                    <input type="submit" value="Logga ut" />
+                </form>
+            </div>
+            <div>
+                <a asp-controller="home" asp-action="RentCar">Hyr en bil</a>
+            </div>
+        }
+        else
+        {
+            <div>
+                <a asp-controller="home" asp-action="Register"> Registrera dig</a>
+                <a asp-controller="home" asp-action="LogIn"> Logga in</a>
+            </div>
+        }
+    </div>
+    <div>
+        @RenderBody()
+    </div>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

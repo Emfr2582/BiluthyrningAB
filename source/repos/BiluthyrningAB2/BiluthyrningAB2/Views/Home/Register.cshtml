@@ -1,0 +1,31 @@
+﻿@model RegisterVM
+
+<h1>Registrera dig</h1>
+
+<form asp-controller="home" asp-action="register">
+    <label asp-for="UserName"></label>
+    <input asp-for="UserName" />
+    <span asp-validation-for="UserName"></span>
+
+    <label asp-for="FirstName"></label>
+    <input asp-for="FirstName" />
+    <span asp-validation-for="FirstName"></span>
+
+    <label asp-for="LastName"></label>
+    <input asp-for="LastName" />
+    <span asp-validation-for="LastName"></span>
+
+    <label asp-for="SSN"></label>
+    <input asp-for="SSN" />
+    <span asp-validation-for="SSN"></span>
+
+    <label asp-for="Email"></label>
+    <input asp-for="Email" />
+    <span asp-validation-for="Email"></span>
+
+    <label asp-for="Password"></label>
+    <input asp-for="Password" type="password" />
+    <span asp-validation-for="Password"></span>
+
+    <input type="submit" value="registrera dig" />
+</form>

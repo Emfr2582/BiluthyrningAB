@@ -1,0 +1,47 @@
+﻿@model RentCarVM
+@{
+    ViewData["Title"] = "RentCar";
+}
+
+<h1>Biluthyrning AB</h1>
+
+<p>Välj en bil att hyra i listan </p>
+
+<form asp-controller="home" asp-action="RentCar" method="post">
+    <select asp-for="Id" asp-items="@Model._cars" class="cars">
+     <option>Välj en bil du vill hyra</option>
+    </select>
+    <br />
+
+
+    <br />
+
+    <h5> Välj antalet dagar du vill hyra bilen</h5>
+    <select asp-for="DaysId" asp-items="@Model._days" class="days">
+<option> Välj antalet dagar du vill hyra</option>
+</select>
+
+
+    <br/>
+    <input type="submit" value="Välj bil" />
+</form>
+@if(Model.Car != null)
+{
+    <p>@Model.Car.Name, </p>
+   
+}
+@section scripts{ 
+<script type="text/javascript">
+    //$(function () {
+    //    $("#cars").change(function () {
+    //        let selected = $(this).val();
+    //        if (selected === $("#carvalue"){
+
+    //        })
+    //    })
+    //}
+</script>
+}
+
+
+
