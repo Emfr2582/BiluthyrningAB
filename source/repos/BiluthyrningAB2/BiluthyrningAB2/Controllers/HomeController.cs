@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using BiluthyrningAB2.Models;
 using BiluthyrningAB2.Models.Cars;
@@ -130,7 +131,8 @@ namespace BiluthyrningAB2.Controllers
                 _days = days.Select(p => new SelectListItem { Selected = p.Value == vM.DaysId, Value = $"{p.Value}", Text = $"{p.Day}"}).ToList(),
                 Days = days.SingleOrDefault(n => n.Value == vM.DaysId)
             };
-
+            var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            carServices.AddBooking(temp, userId);
             return View("SelectedCar",temp);
              
         }

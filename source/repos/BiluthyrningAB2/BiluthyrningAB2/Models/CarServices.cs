@@ -1,6 +1,7 @@
 ﻿using BiluthyrningAB2.Models.Cars;
 using BiluthyrningAB2.Models.Entities;
 using BiluthyrningAB2.Models.ViewModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -63,6 +64,22 @@ namespace BiluthyrningAB2.Models
             obj.Booked = days;
 
             return days; 
+        }
+
+        public void AddBooking(RentCarVM vM, string userId)
+        {
+            int bookingsnumber = 1;
+            Bookings booking = new Bookings()
+            {
+                Model = vM.Car.Model,
+                RegNr = vM.Car.RegistartionNumber,
+                Km = (int)vM.Car.KmDriven,
+                UserId = userId,
+                BookingTime = DateTime.UtcNow,
+                BookingNr = bookingsnumber++.ToString()
+            };
+            context.Bookings.Add(booking);
+            context.SaveChanges();
         }
 
     }
