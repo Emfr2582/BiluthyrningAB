@@ -144,5 +144,12 @@ namespace BiluthyrningAB2.Controllers
             return View(vm);
         }
 
+        [HttpGet]
+        [Authorize]
+        public IActionResult ReturnCar()
+        {
+            return Content("Du har lämnat tillbaka bilen");
+        }
+
     }
 }

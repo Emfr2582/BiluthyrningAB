@@ -12,6 +12,7 @@ namespace BiluthyrningAB2.Models.Entities
             AspNetUserRoles = new HashSet<AspNetUserRoles>();
             AspNetUserTokens = new HashSet<AspNetUserTokens>();
             Bookings = new HashSet<Bookings>();
+            ReturnedCars = new HashSet<ReturnedCars>();
         }
 
         public string Id { get; set; }
@@ -38,5 +39,6 @@ namespace BiluthyrningAB2.Models.Entities
         public virtual ICollection<AspNetUserRoles> AspNetUserRoles { get; set; }
         public virtual ICollection<AspNetUserTokens> AspNetUserTokens { get; set; }
         public virtual ICollection<Bookings> Bookings { get; set; }
+        public virtual ICollection<ReturnedCars> ReturnedCars { get; set; }
     }
 }
