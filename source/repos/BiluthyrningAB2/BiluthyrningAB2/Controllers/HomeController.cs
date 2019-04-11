@@ -24,15 +24,19 @@ namespace BiluthyrningAB2.Controllers
         UserManager<MyIdentityUser> userManager;
         SignInManager<MyIdentityUser> signInManager;
         CarServices carServices;
+        BiluthyrningABContext context;
 
         public HomeController(AccountServices service, UserManager<MyIdentityUser> userManager,
-            SignInManager<MyIdentityUser> signInManager, CarServices carServices, IConfiguration config)
+            SignInManager<MyIdentityUser> signInManager, CarServices carServices, IConfiguration config,
+            BiluthyrningABContext context)
         {
             this.service = service;
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.carServices = carServices;
             Configuration = config;
+            this.context = context;
+            
         }
 
         [HttpGet]
@@ -148,7 +152,50 @@ namespace BiluthyrningAB2.Controllers
         [Authorize]
         public IActionResult ReturnCar()
         {
-            return Content("Du har lämnat tillbaka bilen");
+            var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var bookings = carServices.getBookings(userId);
+            var bookingVMs = new BookingsVM
+            {
+                ListOfUserBookings = bookings
+            };
+
+            return View(bookingVMs);
+        
+        }
+        
+        [HttpPost]
+        [Authorize]
+        public IActionResult ReturnCar(BookingsVM vM)
+        {
+            return View("PayCar",vM);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public IActionResult PayCar(string booking)
+        {
+            var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var x = carServices.getBookings(userId);
+            var booked = x.Single(b => b.BookingNr == booking);
+            var car = carServices.GetCarByRegNr(booked.RegNr);
+            var temp = new PayCarVM
+            {
+                Bookings = booked,
+                 Car = car,
+                 Days = Math.Round((DateTime.Now -booked.BookingTime).TotalDays)
+                
+            };
+            return  View(temp);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult PayCar()
+        {
+            //Bygg ett formulär där du med infon du har räknar ut hur mycket som ska
+            //betalas när användaren lämnar tillbaka bilen.
+            //Se till att skicka till databas när bilen är tillbaka.
+            return null; 
         }
 
     }

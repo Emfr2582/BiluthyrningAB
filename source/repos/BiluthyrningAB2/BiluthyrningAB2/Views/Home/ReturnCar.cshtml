@@ -1,15 +1,18 @@
-﻿@model RentCarVM
-@{
-    ViewData["Title"] = "ReturnCar";
-}
+﻿@model BookingsVM
 
 <h1>ReturnCar</h1>
 
 <text> Här lämnar du tillbaka en bil</text>
 
-<form>
+  
+    <h5>Din aktuella bokningar</h5>
+
+    @foreach (var item in Model.ListOfUserBookings)
+    {
+        <a asp-controller="home" asp-action="PayCar"  asp-route-booking="@item.BookingNr">@item.Model, @item.RegNr</a>
+    }
+    
 
 
-</form>
 
 

@@ -23,10 +23,14 @@ namespace BiluthyrningAB2.Models.Entities
         public virtual DbSet<AspNetUserTokens> AspNetUserTokens { get; set; }
         public virtual DbSet<AspNetUsers> AspNetUsers { get; set; }
         public virtual DbSet<Bookings> Bookings { get; set; }
+        public virtual DbSet<ReturnedCars> ReturnedCars { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer("ConnectionString");
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -160,6 +164,47 @@ namespace BiluthyrningAB2.Models.Entities
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Bookings__UserId__1CBC4616");
+            });
+
+            modelBuilder.Entity<ReturnedCars>(entity =>
+            {
+                entity.ToTable("Returned Cars");
+
+                entity.Property(e => e.BookingNr)
+                    .IsRequired()
+                    .HasMaxLength(20);
+
+                entity.Property(e => e.Price).HasColumnType("money");
+
+                entity.Property(e => e.RegNr)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.ReturnedTime).HasColumnType("datetime");
+
+                entity.Property(e => e.UserId)
+                    .IsRequired()
+                    .HasMaxLength(450);
+
+                entity.HasOne(d => d.BookingNrNavigation)
+                    .WithMany(p => p.ReturnedCarsBookingNrNavigation)
+                    .HasPrincipalKey(p => p.BookingNr)
+                    .HasForeignKey(d => d.BookingNr)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Returned __Booki__2A164134");
+
+                entity.HasOne(d => d.RegNrNavigation)
+                    .WithMany(p => p.ReturnedCarsRegNrNavigation)
+                    .HasPrincipalKey(p => p.RegNr)
+                    .HasForeignKey(d => d.RegNr)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Returned __RegNr__2B0A656D");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.ReturnedCars)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Returned __UserI__29221CFB");
             });
         }
     }

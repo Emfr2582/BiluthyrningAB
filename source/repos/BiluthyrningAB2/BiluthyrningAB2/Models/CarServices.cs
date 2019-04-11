@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace BiluthyrningAB2.Models
@@ -45,6 +46,11 @@ namespace BiluthyrningAB2.Models
             return cars; 
         }
 
+        public Car GetCarByRegNr(string regNr)
+        {
+            return CarList().SingleOrDefault(x => x.RegistartionNumber == regNr);
+        }
+
 
         public List<Days> DayList()
         {
@@ -69,6 +75,9 @@ namespace BiluthyrningAB2.Models
         public void AddBooking(RentCarVM vM, string userId)
         {
             int bookingsnumber = 1;
+            Random random = new Random();
+            string newBookingNr = random.Next(bookingsnumber).ToString();
+
             Bookings booking = new Bookings()
             {
                 Model = vM.Car.Model,
@@ -76,11 +85,35 @@ namespace BiluthyrningAB2.Models
                 Km = (int)vM.Car.KmDriven,
                 UserId = userId,
                 BookingTime = DateTime.UtcNow,
-                BookingNr = bookingsnumber++.ToString()
+                BookingNr = newBookingNr
             };
             context.Bookings.Add(booking);
             context.SaveChanges();
         }
+
+        public void ReturnCar(Bookings bookings,string userId, Car car, ReturnedCarVM returned )
+        {
+            //Vymodellen RentCarVM returnerar null och kastar exception
+            ReturnedCars returnCar = new ReturnedCars()
+            {
+                UserId = userId,
+                RegNr = bookings.RegNr,
+                BookingNr = bookings.BookingNr,
+                KmDriven = returned.KmDriven,
+                ReturnedTime = DateTime.Today,
+                Price = car.PricePerDay + ((decimal)car.KmDriven)
+            };
+
+            context.ReturnedCars.Add(returnCar);
+            context.SaveChanges();
+           
+        }
+
+        public List<Bookings> getBookings(string userId)
+        {
+            return context.Bookings.Where(q => q.UserId == userId).ToList();
+        }
+
 
     }
 }

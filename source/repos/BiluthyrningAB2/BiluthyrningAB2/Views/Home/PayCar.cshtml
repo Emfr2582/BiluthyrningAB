@@ -1,0 +1,13 @@
+﻿@model PayCarVM
+@{
+    ViewData["Title"] = "PayCar";
+}
+
+<h5>Här betalar du för din bil</h5>
+<form asp-controller="home" asp-action="PayCar" method="post">
+  
+    @Model.Bookings.RegNr @Model.Car.PricePerDay kr
+    @Model.Days <text>total days</text>
+
+</form>
+
