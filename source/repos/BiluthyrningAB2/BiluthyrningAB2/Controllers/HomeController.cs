@@ -92,7 +92,6 @@ namespace BiluthyrningAB2.Controllers
                 {
                     ModelState.AddModelError(string.Empty, "Tyvärr kunde du inte loggas in, försök igen");
                     return RedirectToAction("Login");
-
                 }
             }
             return Redirect("/");
@@ -177,26 +176,80 @@ namespace BiluthyrningAB2.Controllers
             var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var x = carServices.getBookings(userId);
             var booked = x.Single(b => b.BookingNr == booking);
+            var calculatedDays = Math.Floor((DateTime.Now - booked.BookingTime).TotalDays);
             var car = carServices.GetCarByRegNr(booked.RegNr);
             var temp = new PayCarVM
             {
                 Bookings = booked,
-                 Car = car,
-                 Days = Math.Round((DateTime.Now -booked.BookingTime).TotalDays)
-                
+                BookingId = booked.BookingNr,
+                RegNr = car.RegistartionNumber,
+                Car = car,
+                Days = calculatedDays < 1 ? 1 : calculatedDays, 
+                ReturnedDate = DateTime.Now
             };
-            return  View(temp);
+           
+            return  View("PayCar",temp); 
         }
 
         [HttpPost]
         [Authorize]
-        public IActionResult PayCar()
+        public IActionResult PayCar(PayCarVM vM)
         {
-            //Bygg ett formulär där du med infon du har räknar ut hur mycket som ska
-            //betalas när användaren lämnar tillbaka bilen.
-            //Se till att skicka till databas när bilen är tillbaka.
-            return null; 
+            var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var x = carServices.getBookings(userId);
+            var booked = x.Single(b => b.BookingNr == vM.BookingId);
+            var calculatedDays = Math.Floor((DateTime.Now - booked.BookingTime).TotalDays);
+            var car = carServices.GetCarByRegNr(booked.RegNr);
+            var temp = new PayCarVM()
+            {
+                Bookings = booked,
+                BookingId = booked.BookingNr,
+                RegNr = car.RegistartionNumber,
+                Car = car,
+                Days = calculatedDays < 1 ? 1 : calculatedDays,
+                ReturnedDate = DateTime.Now,
+                KmDriven = vM.KmDriven,
+                Price = car.CalculateTotalPrice((int)calculatedDays)
+            };
+            
+            return View("PayBill",temp);
+
         }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult PayBill(PayCarVM vM) 
+        {
+            var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var x = carServices.getBookings(userId);
+            var booked = x.Single(b => b.BookingNr == vM.BookingId);
+            var calculatedDays = Math.Floor((DateTime.Now - booked.BookingTime).TotalDays);
+            var car = carServices.GetCarByRegNr(booked.RegNr);
+            var temp = new PayCarVM()
+            {
+                Bookings = booked,
+                BookingId = booked.BookingNr,
+                RegNr = car.RegistartionNumber,
+                Car = car,
+                Days = calculatedDays < 1 ? 1 : calculatedDays,
+                ReturnedDate = DateTime.Now,
+                KmDriven = vM.KmDriven,
+                Price = car.CalculateTotalPrice((int)(calculatedDays < 1 ? 1 : calculatedDays))
+            };
+
+            carServices.ReturnCar(temp, userId);
+            return View("ThankYou",temp);
+
+        }
+
+        [HttpGet]
+        [Authorize]
+        public IActionResult ThankYou()
+        {
+            return View();
+        }
+       
+       
 
     }
 }

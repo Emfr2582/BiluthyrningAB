@@ -1,0 +1,24 @@
+﻿@model PayCarVM
+@{
+    ViewData["Title"] = "PayBill";
+}
+
+<h1>Bekräftelse</h1>
+@{
+
+    decimal totalDaysRented = (int)Model.Car.CalculateTotalPrice((int)Model.Days);
+   
+}
+<form asp-controller="home" asp-action="PayBill" method="post">
+    <h5> Du ska betala: @totalDaysRented kr </h5>
+    <text>Vänligen bekräfta betalning</text>
+    <br/>
+    <input asp-for="BookingId" type="hidden" />
+    <input asp-for="RegNr" type="hidden" />
+    <input asp-for="KmDriven" type="hidden" />
+    <input asp-for="ReturnedDate" type="hidden" />
+    
+    <input type="submit" value="Betala"/>
+
+</form>
+

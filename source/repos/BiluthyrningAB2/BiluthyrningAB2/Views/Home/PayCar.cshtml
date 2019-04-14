@@ -1,13 +1,28 @@
-﻿@model PayCarVM
-@{
-    ViewData["Title"] = "PayCar";
-}
+﻿
+@model PayCarVM
+
 
 <h5>Här betalar du för din bil</h5>
 <form asp-controller="home" asp-action="PayCar" method="post">
-  
-    @Model.Bookings.RegNr @Model.Car.PricePerDay kr
-    @Model.Days <text>total days</text>
+    <h5>Du har kört en:@Model.Car.Model av typ @Model.Car.Name </h5>
+    <h5>Registreringsnummer: @Model.Bookings.RegNr </h5>
+    <h5> Pris per dag för hyra: @Model.Car.PricePerDay kr/dag </h5>
+    <h5> Antal hyrda dagar för den aktuella bokningen: @Model.Days </h5>
 
+    <label>Mata in antalet körda kilometrar</label>
+    <text>Om du hyrt en "liten bil" anger du värdet 0 i inmatningsrutan</text>
+    <input asp-for="BookingId" type="hidden"/>
+    <input asp-for="RegNr" type="hidden" />
+    <input asp-for="Days" type="hidden" />
+    
+    <input asp-for="KmDriven" />
+    <span asp-validation-for="KmDriven"></span>
+
+    @if(Model.Days > 0)
+    {
+        Model.Price = (Model.Car.PricePerDay * (decimal)Model.Days);
+    }
+
+    <input type="submit" value="Bekräfta" />
 </form>
 

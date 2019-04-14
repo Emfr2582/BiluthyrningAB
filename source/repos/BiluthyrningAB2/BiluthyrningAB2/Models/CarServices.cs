@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace BiluthyrningAB2.Models
@@ -74,10 +75,6 @@ namespace BiluthyrningAB2.Models
 
         public void AddBooking(RentCarVM vM, string userId)
         {
-            int bookingsnumber = 1;
-            Random random = new Random();
-            string newBookingNr = random.Next(bookingsnumber).ToString();
-
             Bookings booking = new Bookings()
             {
                 Model = vM.Car.Model,
@@ -85,23 +82,22 @@ namespace BiluthyrningAB2.Models
                 Km = (int)vM.Car.KmDriven,
                 UserId = userId,
                 BookingTime = DateTime.UtcNow,
-                BookingNr = newBookingNr
+                BookingNr = Guid.NewGuid().ToString(),
             };
             context.Bookings.Add(booking);
             context.SaveChanges();
         }
 
-        public void ReturnCar(Bookings bookings,string userId, Car car, ReturnedCarVM returned )
+        public void ReturnCar(PayCarVM vM,string userId)
         {
-            //Vymodellen RentCarVM returnerar null och kastar exception
             ReturnedCars returnCar = new ReturnedCars()
             {
                 UserId = userId,
-                RegNr = bookings.RegNr,
-                BookingNr = bookings.BookingNr,
-                KmDriven = returned.KmDriven,
-                ReturnedTime = DateTime.Today,
-                Price = car.PricePerDay + ((decimal)car.KmDriven)
+                RegNr = vM.Bookings.RegNr,
+                BookingNr = vM.Bookings.BookingNr,
+                KmDriven = vM.KmDriven,
+                ReturnedTime = vM.ReturnedDate,
+                Price = vM.Price
             };
 
             context.ReturnedCars.Add(returnCar);
@@ -113,6 +109,8 @@ namespace BiluthyrningAB2.Models
         {
             return context.Bookings.Where(q => q.UserId == userId).ToList();
         }
+
+
 
 
     }

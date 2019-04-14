@@ -1,11 +1,13 @@
 ﻿using BiluthyrningAB2.Models.Entities;
 using BiluthyrningAB2.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace BiluthyrningAB2.Models
@@ -51,6 +53,8 @@ namespace BiluthyrningAB2.Models
         {
             await signInManager.SignOutAsync();
         }
+
+        
 
 
     }
