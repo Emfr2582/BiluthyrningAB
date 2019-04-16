@@ -21,10 +21,5 @@ namespace BiluthyrningAB2.Models.Cars
             return PricePerDay * rentedDays;
         }
 
-        public override int TotalDaysRented(DateTime startToRent)
-        {
-
-            return 0;
-        }
     }
 }

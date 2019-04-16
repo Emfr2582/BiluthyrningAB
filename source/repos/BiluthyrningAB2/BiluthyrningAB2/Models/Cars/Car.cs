@@ -30,9 +30,6 @@ namespace BiluthyrningAB2.Models.Cars
         }
 
         public abstract decimal CalculateTotalPrice(int rentedDays);
-
-        public abstract int TotalDaysRented(DateTime startToRent);
-
         
     }
 }

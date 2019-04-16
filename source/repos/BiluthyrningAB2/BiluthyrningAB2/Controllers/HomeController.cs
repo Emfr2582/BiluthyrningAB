@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using BiluthyrningAB2.Models;
-using BiluthyrningAB2.Models.Cars;
 using BiluthyrningAB2.Models.Entities;
 using BiluthyrningAB2.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -109,13 +107,11 @@ namespace BiluthyrningAB2.Controllers
         [Authorize]
         public IActionResult RentCar()
         {
-            var x = carServices.CarList();
-            var days = carServices.DayList();
+            var listOfCars = carServices.CarList();
 
             var temp = new RentCarVM
             {
-                _cars = x.Select(y => new SelectListItem { Value = $"{y.Id}", Text = $"{y.Name}, {y.Model }, Pris per dag: {y.PricePerDay}" }).ToList(),
-                _days = days.Select(p => new SelectListItem { Value = $"{p.Value}", Text = $"{p.Day}" }).ToList()
+                _cars = listOfCars.Select(y => new SelectListItem { Value = $"{y.Id}", Text = $"{y.Name}, {y.Model }, Pris per dag: {y.PricePerDay}" }).ToList(),
             };
             return View(temp);
         }
@@ -125,14 +121,11 @@ namespace BiluthyrningAB2.Controllers
         public IActionResult RentCar([FromForm] RentCarVM vM)
         {
             
-            var x = carServices.CarList();
-            var days = carServices.DayList();
+            var listOfCars = carServices.CarList();
             var temp = new RentCarVM
             {
-                _cars = x.Select(t => new SelectListItem { Selected = t.Id == vM.Id, Value = $"{t.Id}", Text = $"{t.Name}, {t.Model }, Pris per dag: {t.PricePerDay}" }).ToList(),
-                Car = x.SingleOrDefault(m => m.Id == vM.Id),
-                _days = days.Select(p => new SelectListItem { Selected = p.Value == vM.DaysId, Value = $"{p.Value}", Text = $"{p.Day}"}).ToList(),
-                Days = days.SingleOrDefault(n => n.Value == vM.DaysId)
+                _cars = listOfCars.Select(t => new SelectListItem { Selected = t.Id == vM.Id, Value = $"{t.Id}", Text = $"{t.Name}, {t.Model }, Pris per dag: {t.PricePerDay}" }).ToList(),
+                Car = listOfCars.SingleOrDefault(m => m.Id == vM.Id),
             };
             var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             carServices.AddBooking(temp, userId);
@@ -152,14 +145,13 @@ namespace BiluthyrningAB2.Controllers
         public IActionResult ReturnCar()
         {
             var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var bookings = carServices.getBookings(userId);
+            var userBooking = carServices.getBookings(userId);
             var bookingVMs = new BookingsVM
             {
-                ListOfUserBookings = bookings
+                ListOfUserBookings = userBooking
             };
 
             return View(bookingVMs);
-        
         }
         
         [HttpPost]
@@ -174,8 +166,8 @@ namespace BiluthyrningAB2.Controllers
         public IActionResult PayCar(string booking)
         {
             var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var x = carServices.getBookings(userId);
-            var booked = x.Single(b => b.BookingNr == booking);
+            var listOfCars = carServices.getBookings(userId);
+            var booked = listOfCars.Single(b => b.BookingNr == booking);
             var calculatedDays = Math.Floor((DateTime.Now - booked.BookingTime).TotalDays);
             var car = carServices.GetCarByRegNr(booked.RegNr);
             var temp = new PayCarVM
@@ -196,8 +188,8 @@ namespace BiluthyrningAB2.Controllers
         public IActionResult PayCar(PayCarVM vM)
         {
             var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var x = carServices.getBookings(userId);
-            var booked = x.Single(b => b.BookingNr == vM.BookingId);
+            var userBookedCar = carServices.getBookings(userId);
+            var booked = userBookedCar.Single(b => b.BookingNr == vM.BookingId);
             var calculatedDays = Math.Floor((DateTime.Now - booked.BookingTime).TotalDays);
             var car = carServices.GetCarByRegNr(booked.RegNr);
             var temp = new PayCarVM()
@@ -213,7 +205,6 @@ namespace BiluthyrningAB2.Controllers
             };
             
             return View("PayBill",temp);
-
         }
 
         [HttpPost]
@@ -221,8 +212,8 @@ namespace BiluthyrningAB2.Controllers
         public IActionResult PayBill(PayCarVM vM) 
         {
             var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var x = carServices.getBookings(userId);
-            var booked = x.Single(b => b.BookingNr == vM.BookingId);
+            var userBookedCar = carServices.getBookings(userId);
+            var booked = userBookedCar.Single(b => b.BookingNr == vM.BookingId);
             var calculatedDays = Math.Floor((DateTime.Now - booked.BookingTime).TotalDays);
             var car = carServices.GetCarByRegNr(booked.RegNr);
             var temp = new PayCarVM()
@@ -236,10 +227,8 @@ namespace BiluthyrningAB2.Controllers
                 KmDriven = vM.KmDriven,
                 Price = car.CalculateTotalPrice((int)(calculatedDays < 1 ? 1 : calculatedDays))
             };
-
             carServices.ReturnCar(temp, userId);
             return View("ThankYou",temp);
-
         }
 
         [HttpGet]
@@ -249,7 +238,5 @@ namespace BiluthyrningAB2.Controllers
             return View();
         }
        
-       
-
     }
 }

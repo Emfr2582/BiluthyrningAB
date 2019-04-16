@@ -16,13 +16,6 @@
 
     <br />
 
-    <h5> Välj antalet dagar du vill hyra bilen</h5>
-    <select asp-for="DaysId" asp-items="@Model._days" class="days">
-<option> Välj antalet dagar du vill hyra</option>
-</select>
-
-
-    <br/>
     <input type="submit" value="Välj bil" />
 </form>
 @if(Model.Car != null)

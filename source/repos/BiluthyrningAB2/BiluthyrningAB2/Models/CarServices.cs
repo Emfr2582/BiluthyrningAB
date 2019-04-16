@@ -1,16 +1,10 @@
 ﻿using BiluthyrningAB2.Models.Cars;
 using BiluthyrningAB2.Models.Entities;
 using BiluthyrningAB2.Models.ViewModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BiluthyrningAB2.Models
 {
@@ -50,27 +44,6 @@ namespace BiluthyrningAB2.Models
         public Car GetCarByRegNr(string regNr)
         {
             return CarList().SingleOrDefault(x => x.RegistartionNumber == regNr);
-        }
-
-
-        public List<Days> DayList()
-        {
-            List<Days> days = new List<Days>()
-            {
-                new Days {Day = "1 dag", Value = 1, IsChecked = false},
-                new Days {Day = "2 dagar", Value = 2, IsChecked = false},
-                new Days {Day = "3 dagar", Value = 3, IsChecked = false},
-                new Days {Day = "4 dagar", Value = 4, IsChecked = false},
-                new Days {Day = "5 dagar", Value = 5, IsChecked = false},
-                new Days {Day = "6 dagar", Value = 6, IsChecked = false},
-                new Days {Day = "7 dagar", Value = 7, IsChecked = false},
-                new Days {Day = "8 dagar", Value = 8, IsChecked = false},
-                new Days {Day = "9 dagar", Value = 9, IsChecked = false}
-            };
-            ListOfDays obj = new ListOfDays();
-            obj.Booked = days;
-
-            return days; 
         }
 
         public void AddBooking(RentCarVM vM, string userId)
