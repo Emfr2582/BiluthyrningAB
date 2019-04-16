@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace BiluthyrningAB2
 {
@@ -52,6 +54,16 @@ namespace BiluthyrningAB2
             })
             .AddEntityFrameworkStores<MyIdentityDbContext>()
             .AddDefaultTokenProviders();
+
+         services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+        .AddRazorPagesOptions(options =>
+        {
+            options.AllowAreas = true;
+            options.Conventions.AuthorizeAreaFolder("Identity", "/Account/Manage");
+            options.Conventions.AuthorizeAreaPage("Identity", "/Account/Logout");
+        });
+
+            services.AddSingleton<IEmailSender, IEmailSender>();
 
             services.AddTransient<AccountServices>();
             services.AddTransient<CarServices>();
