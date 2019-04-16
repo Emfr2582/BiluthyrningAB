@@ -36,6 +36,13 @@ namespace BiluthyrningAB2
                 CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(o => o.LoginPath = "/Account/Login");
 
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = $"/Identity/Account/Login";
+                options.LogoutPath = $"/Identity/Account/Logout";
+                options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
+            });
+
             connString = configuration["ConnectionString"];
             
 
@@ -44,8 +51,6 @@ namespace BiluthyrningAB2
 
             services.AddDbContext<MyIdentityDbContext>(o =>
             o.UseSqlServer(connString));
-
-           
 
             services.AddIdentity<MyIdentityUser, IdentityRole>(o =>
             {
