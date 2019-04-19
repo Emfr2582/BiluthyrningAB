@@ -11,6 +11,7 @@ namespace BiluthyrningAB2.Models.ViewModels
         public string Firstname { get; set; }
         public string Lastname { get; set; }
         public string Ssn { get; set; }
+   
     }
 }
 

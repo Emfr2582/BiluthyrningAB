@@ -1,13 +1,6 @@
 ﻿using BiluthyrningAB2.Models.Entities;
 using BiluthyrningAB2.Models.ViewModels;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace BiluthyrningAB2.Models
@@ -17,27 +10,32 @@ namespace BiluthyrningAB2.Models
         BiluthyrningABContext context;
         UserManager<MyIdentityUser> userManager;
         SignInManager<MyIdentityUser> signInManager;
+        RoleManager<IdentityRole> roleManager;
 
         public AccountServices(BiluthyrningABContext context, UserManager<MyIdentityUser> userManager,
-            SignInManager<MyIdentityUser> signInManager)
+            SignInManager<MyIdentityUser> signInManager, RoleManager<IdentityRole> roleManager)
         {
             this.context = context;
             this.userManager = userManager;
             this.signInManager = signInManager;
+            this.roleManager = roleManager;
         }
 
         public async Task<bool> RegisterUser(RegisterVM vm)
         {
+            var newUser = new MyIdentityUser
+            {
+                UserName = vm.UserName,
+                Firstname = vm.FirstName,
+                Lastname = vm.LastName,
+                Ssn = vm.SSN,
+                Email = vm.Email,
+            };
             var result = await userManager.CreateAsync(
-                new MyIdentityUser
-                {
-                    UserName = vm.UserName,
-                    Firstname = vm.FirstName,
-                    Lastname = vm.LastName,
-                    Ssn = vm.SSN,
-                    Email = vm.Email,
-                },
-                vm.Password);
+              newUser,vm.Password);
+            var user = await userManager.FindByNameAsync(vm.UserName);
+            var role = await roleManager.CreateAsync(new IdentityRole {Name = "Customer" });
+            var roleResult = await userManager.AddToRoleAsync(user, "Customer");
             return result.Succeeded;
         }
 

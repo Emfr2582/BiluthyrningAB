@@ -20,11 +20,5 @@ namespace BiluthyrningAB2.Models.ViewModels
 
         public Car Car { get; set; }
 
-        public int DaysId { get; set; }
-
-        public Days Days { get; set; }
-
-
-
     }
 }

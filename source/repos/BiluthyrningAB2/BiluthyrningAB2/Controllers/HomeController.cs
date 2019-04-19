@@ -52,6 +52,7 @@ namespace BiluthyrningAB2.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Register()
         {
             return View();

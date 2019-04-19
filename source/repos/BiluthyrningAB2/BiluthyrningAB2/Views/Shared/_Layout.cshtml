@@ -1,5 +1,4 @@
-﻿@using System.Security.Claims
-<html>
+﻿<html>
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>@ViewBag.Title</title>
@@ -28,11 +27,13 @@
         else
         {
             <div>
-                <a asp-controller="home" asp-action="Register"> Registrera dig</a>
-                <a asp-controller="home" asp-action="LogIn"> Logga in</a>
+                <a asp-controller="Home" asp-action="Register"> Registrera dig</a>
+                <a asp-controller="Home" asp-action="LogIn"> Logga in</a>
             </div>
         }
+        Runk
     </div>
+    <partial name="_LoginPartial" />
     <div>
         @RenderBody()
     </div>

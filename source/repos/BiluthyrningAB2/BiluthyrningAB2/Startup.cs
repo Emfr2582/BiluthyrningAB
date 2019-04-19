@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using BiluthyrningAB2.Models;
+﻿using BiluthyrningAB2.Models;
 using BiluthyrningAB2.Models.Entities;
 using BiluthyrningAB2.Models.ViewModels;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
@@ -34,7 +28,7 @@ namespace BiluthyrningAB2
         {
             services.AddAuthentication(
                 CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(o => o.LoginPath = "/Account/Login");
+                .AddCookie(o => o.LoginPath = "/Home/Login");
 
             services.ConfigureApplicationCookie(options =>
             {
@@ -52,6 +46,12 @@ namespace BiluthyrningAB2
             services.AddDbContext<MyIdentityDbContext>(o =>
             o.UseSqlServer(connString));
 
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("RequireAdministratorRole",
+                     policy => policy.RequireRole("Administrator"));
+            });
+
             services.AddIdentity<MyIdentityUser, IdentityRole>(o =>
             {
                 o.Password.RequireNonAlphanumeric = false;
@@ -60,16 +60,10 @@ namespace BiluthyrningAB2
             .AddEntityFrameworkStores<MyIdentityDbContext>()
             .AddDefaultTokenProviders();
 
-         services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-        .AddRazorPagesOptions(options =>
-        {
-            options.AllowAreas = true;
-            options.Conventions.AuthorizeAreaFolder("Identity", "/Account/Manage");
-            options.Conventions.AuthorizeAreaPage("Identity", "/Account/Logout");
-        });
-
-            services.AddSingleton<IEmailSender, IEmailSender>();
-
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+ 
+        
+            services.AddSingleton<IEmailSender, EmailSender>();
             services.AddTransient<AccountServices>();
             services.AddTransient<CarServices>();
             services.AddMvc();
